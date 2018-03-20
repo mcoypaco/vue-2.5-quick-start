@@ -5,7 +5,7 @@
         <v-layout justify-center>
           <img src="/static/img/logo.png" class="mb-3" height="150"/>
         </v-layout>
-        <v-form v-model="valid">
+        <v-form ref="form">
           <v-card>
             <v-card-title>
               <v-flex class="mx-3">
@@ -27,7 +27,7 @@
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat @click="submit">Login</v-btn>
+              <v-btn flat @click="submit" :loading="busy">Login</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>
@@ -37,24 +37,50 @@
 </template>
 
 <script>
+import axios from 'axios'
+
+import env from '../environments'
+import HttpException from '../mixins/HttpException'
+
 export default {
+  name: 'AuthLogin',
+  mixins: [ HttpException ],
   data () {
     return {
+      busy: false,
       email: '',
       emailRules: [
         v => !!v || 'Email is required',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
       password: '',
-      passwordRules: [
-        v => !!v || 'Password is required'
-      ]
+      passwordRules: [ v => !!v || 'Password is required' ]
     }
   },
   methods: {
+    attemptLogin () {
+      this.busy = true
+
+      return axios
+        .post(`${env.api.url}/oauth/token`, {
+          grant_type: 'password',
+          client_id: env.api.client_id,
+          client_secret: env.api.client_secret,
+          username: this.email,
+          password: this.password
+        })
+    },
+    redirectHome (resp) {
+
+    },
     submit () {
       if (this.$refs.form.validate()) {
-
+        this.attemptLogin()
+          .then(resp => this.redirectHome(resp))
+          .catch(error => this.handle(error))
+          .finally(() => {
+            this.busy = false
+          })
       }
     }
   }

@@ -5,17 +5,23 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import 'mdi/css/materialdesignicons.min.css'
 
-import App from './App'
 import router from './router'
+import store from './store'
+
+import App from './App'
+import AppAlertDialog from './components/AppAlertDialog'
 
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
 
+Vue.component('app-alert-dialog', AppAlertDialog)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
