@@ -30,23 +30,13 @@ export default {
   },
   methods: {
     ...mapMutations('dialog', ['closeDialog']),
-    /** 
-     * Close the dialog and execute agree callback
-     * 
-     * 
-    */
     closeAndAgree () {
       this.closeDialog()
       if (this.action) this.action()
     },
-
-    /**
-     * Close the dialog and execute disagree callback
-     * 
-     */
     closeAndDisagree () {
       this.closeDialog()
-      this.cancel()
+      if (this.cancel) this.cancel()
     }
   }
 }

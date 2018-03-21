@@ -5,7 +5,7 @@
         <v-layout justify-center>
           <img src="/static/img/logo.png" class="mb-3" height="150"/>
         </v-layout>
-        <v-form ref="form">
+        <v-form ref="form" lazy-validation>
           <v-card>
             <v-card-title>
               <v-flex class="mx-3">
@@ -14,6 +14,7 @@
                   v-model="email"
                   :rules="emailRules"
                   required
+                  validate-on-blur
                 ></v-text-field>
                 <v-text-field
                   label="Password"
@@ -21,13 +22,14 @@
                   v-model="password"
                   :rules="passwordRules"
                   required
+                  validate-on-blur
                 ></v-text-field>
                 <router-link to="/password/reset">Having trouble logging in?</router-link>
               </v-flex>
             </v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn flat @click="submit" :loading="busy">Login</v-btn>
+              <v-btn flat type="submit" @click.prevent="submit" :loading="busy">Login</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>
@@ -40,11 +42,12 @@
 import axios from 'axios'
 
 import env from '../environments'
+import Auth from '../mixins/Auth'
 import HttpException from '../mixins/HttpException'
 
 export default {
   name: 'AuthLogin',
-  mixins: [ HttpException ],
+  mixins: [ Auth, HttpException ],
   data () {
     return {
       busy: false,
@@ -70,14 +73,17 @@ export default {
           password: this.password
         })
     },
-    redirectHome (resp) {
-
+    storeAccessToken (data) {
+      this.setApiAccess(data)
+      this.$router.push({ name: 'Home' })
     },
     submit () {
       if (this.$refs.form.validate()) {
         this.attemptLogin()
-          .then(resp => this.redirectHome(resp))
-          .catch(error => this.handle(error))
+          .then(({ data }) => this.storeAccessToken(data))
+          .catch(error => {
+            this.handle(error)
+          })
           .finally(() => {
             this.busy = false
           })

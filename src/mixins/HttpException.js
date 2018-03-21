@@ -36,6 +36,7 @@ export default {
           return this.defaultError()
       }
     },
+
     /**
      * Parse error string if error is not yet an object
      *
@@ -47,17 +48,12 @@ export default {
     },
 
     defaultError () {
-      const body = 'Please login to continue.'
-      const action = function () {
-        console.log('It works')
-      }
-
       this.openAlertDialog({
         title: this.error.statusText,
-        body,
-        action
+        body: this.error.message
       })
     },
+
     internalServerError () {
       const body = 'Oops! Something went wrong. Please try again or refresh the page.'
       const actionLabel = 'Send Report'
@@ -70,14 +66,32 @@ export default {
         cancelLabel
       })
     },
+
     unauthenticated () {
+      const body = 'Please login to continue.'
 
+      this.openAlertDialog({
+        title: this.error.statusText,
+        body
+      })
     },
+
     unauthorized () {
+      const body = 'This action is unauthorized.'
 
+      this.openAlertDialog({
+        title: this.error.statusText,
+        body
+      })
     },
-    unprocessable () {
 
+    unprocessable () {
+      const body = 'Please check the form for errors.'
+
+      this.openAlertDialog({
+        title: this.error.statusText,
+        body
+      })
     }
   }
 }

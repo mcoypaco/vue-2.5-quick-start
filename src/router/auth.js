@@ -1,5 +1,7 @@
 import AuthLogin from '@/components/AuthLogin'
 
+import Auth from '../mixins/Auth'
+
 export default {
   routes: [
     {
@@ -7,7 +9,8 @@ export default {
       name: 'Login',
       component: AuthLogin,
       beforeEnter: (to, from, next) => {
-        // Todo: redirect user if authenticated
+        if (Auth.methods.getApiAccess()) return next('/')
+
         next()
       }
     }
