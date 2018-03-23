@@ -2,6 +2,7 @@
   <v-app>
     <router-view/>
     <app-alert-dialog></app-alert-dialog>
+    <app-confirmation-dialog></app-confirmation-dialog>
   </v-app>
 </template>
 

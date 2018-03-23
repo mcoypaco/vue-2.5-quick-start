@@ -1,6 +1,6 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog :value="dialog" return-value="true" lazy persistent max-width="500">
+    <v-dialog :value="alertDialog" lazy persistent max-width="500">
       <v-card>
         <v-card-title class="headline">{{ title }}</v-card-title>
         <v-card-text>{{ body }}</v-card-text>
@@ -20,7 +20,7 @@ export default {
   name: 'AppAlertDialog',
   computed: {
     ...mapState('dialog', [
-      'dialog',
+      'alertDialog',
       'title',
       'body',
       'action',
@@ -30,7 +30,7 @@ export default {
   methods: {
     ...mapMutations('dialog', ['closeDialog']),
     closeAndAgree () {
-      this.closeDialog()
+      this.closeDialog('alertDialog')
       if (this.action) this.action()
     }
   }

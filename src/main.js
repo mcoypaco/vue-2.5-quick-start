@@ -10,12 +10,14 @@ import store from './store'
 
 import App from './App'
 import AppAlertDialog from './components/AppAlertDialog'
+import AppConfirmationDialog from './components/AppConfirmationDialog'
 
 Vue.use(Vuetify)
 
 Vue.config.productionTip = false
 
 Vue.component('app-alert-dialog', AppAlertDialog)
+Vue.component('app-confirmation-dialog', AppConfirmationDialog)
 
 /* eslint-disable no-new */
 new Vue({
