@@ -1,16 +1,46 @@
+import axios from 'axios'
+
+import env from '../environments'
+import HttpException from './HttpException'
+
 export default {
   methods: {
-    setApiAccess (data) {
-      localStorage.setItem('apiAccess', JSON.stringify(data))
+    setAccessToken (data) {
+      localStorage.setItem('accessToken', data)
     },
-    getApiAccess () {
-      return JSON.parse(localStorage.getItem('apiAccess'))
+    getAccessToken () {
+      return localStorage.getItem('accessToken')
+    },
+    // Todo: Store the user in vuex instead
+    setUser (data) {
+      localStorage.setItem('user', JSON.stringify(data))
+    },
+    getUser () {
+      return JSON.parse(localStorage.getItem('user'))
+    },
+    verifyAccessToken (token, redirectFn) {
+      const api = axios.create({
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      return api.get(`${env.api.url}/api/user`)
+        .then(({ data }) => {
+          this.setAccessToken(token)
+          this.setUser(data)
+          redirectFn()
+        })
+        .catch(({ response }) => HttpException.methods.handle(response))
     },
     logout () {
-      // Todo: Revoke token in backend
-      // Todo: Revoke user info
-      localStorage.removeItem('apiAccess')
-      this.$router.push({ path: 'Login' })
+      const api = axios.create({
+        headers: {
+          Authorization: `Bearer ${this.getAccessToken()}`
+        }
+      })
+
+      return api.post(`${env.api.url}/api/logout`)
     }
   }
 }

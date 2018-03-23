@@ -57,7 +57,7 @@ export default {
     internalServerError () {
       const body = 'Oops! Something went wrong. Please try again or refresh the page.'
       const actionLabel = 'Send Report'
-      const cancelLabel = 'Cancel'
+      const cancelLabel = `Don't Send`
 
       this.openConfirmationDialog({
         title: this.error.statusText,

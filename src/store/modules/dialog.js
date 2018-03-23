@@ -3,7 +3,8 @@ export default {
   strict: true,
   state () {
     return {
-      dialog: false,
+      alertDialog: false,
+      confirmationDialog: false,
       title: '',
       body: '',
       action: null,
@@ -18,7 +19,7 @@ export default {
       state.body = body
       state.actionLabel = actionLabel || 'Got it!'
       state.action = action
-      state.dialog = true
+      state.alertDialog = true
     },
     openConfirmationDialog (state, { title, body, action, actionLabel, cancelLabel }) {
       state.title = title
@@ -26,10 +27,10 @@ export default {
       state.actionLabel = actionLabel
       state.cancelLabel = cancelLabel
       state.action = action
-      state.dialog = true
+      state.confirmationDialog = true
     },
-    closeDialog (state) {
-      state.dialog = false
+    closeDialog (state, dialog) {
+      state[dialog] = false
     }
   }
 }

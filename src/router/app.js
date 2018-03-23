@@ -9,7 +9,9 @@ export default {
       name: 'Home',
       component: Home,
       beforeEnter: (to, from, next) => {
-        if (Auth.methods.getApiAccess()) return next()
+        if (Auth.methods.getAccessToken()) {
+          return Auth.methods.verifyAccessToken(Auth.methods.getAccessToken(), () => next())
+        }
 
         next('/login')
       }

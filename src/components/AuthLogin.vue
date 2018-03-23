@@ -5,34 +5,76 @@
         <v-layout justify-center>
           <img src="/static/img/logo.png" class="mb-3" height="150"/>
         </v-layout>
-        <v-form ref="form" lazy-validation>
-          <v-card>
-            <v-card-title>
-              <v-flex class="mx-3">
-                <v-text-field
-                  label="Email"
-                  v-model="email"
-                  :rules="emailRules"
-                  required
-                  validate-on-blur
-                ></v-text-field>
-                <v-text-field
-                  label="Password"
-                  type="password"
-                  v-model="password"
-                  :rules="passwordRules"
-                  required
-                  validate-on-blur
-                ></v-text-field>
-                <router-link to="/password/reset">Having trouble logging in?</router-link>
+        <v-card>
+          <v-card-title>
+            <v-layout column>
+              <v-flex class="mx-3 mb-3">
+                <v-form ref="form" lazy-validation>
+                  <v-text-field
+                    label="Email"
+                    v-model="email"
+                    :rules="emailRules"
+                    required
+                    validate-on-blur
+                  ></v-text-field>
+                  <v-text-field
+                    label="Password"
+                    type="password"
+                    v-model="password"
+                    :rules="passwordRules"
+                    required
+                    validate-on-blur
+                  ></v-text-field>
+                  <div class="mb-4">
+                    <router-link to="/password/reset">Having trouble logging in?</router-link>
+                  </div>
+                  <v-btn
+                    block
+                    large
+                    depressed
+                    class="mt-4"
+                    color="primary"
+                    type="submit"
+                    @click.prevent="submit"
+                    :loading="busy">
+                    <v-icon left>mdi-email</v-icon>
+                    Sign In
+                  </v-btn>
+                </v-form>
               </v-flex>
-            </v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn flat type="submit" @click.prevent="submit" :loading="busy">Login</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-form>
+              <h3 class="subheading text-xs-center text-sm-center text-md-center text-lg-center text-xl-center">OR</h3>
+              <v-flex class="mt-2 px-3">
+                <v-btn
+                  block
+                  dark
+                  large
+                  depressed
+                  color="red"
+                  class="my-4"
+                  :href="oAuth.google">
+                  <v-icon left>mdi-google-plus</v-icon>
+                  Sign in with Google
+                </v-btn>
+                <v-btn
+                  block
+                  dark
+                  large
+                  depressed
+                  class="my-4"
+                  :href="oAuth.github">
+                  <v-icon left>mdi-github-circle</v-icon>
+                  Sign in with Github
+                </v-btn>
+              </v-flex>
+              <v-flex class="px-3">
+                <p>
+                  Don't have an account?
+                  <router-link to="/register">Create an account</router-link>
+                </p>
+              </v-flex>
+            </v-layout>
+          </v-card-title>
+        </v-card>
       </v-flex>
     </v-layout>
   </v-content>
@@ -56,6 +98,10 @@ export default {
         v => !!v || 'Email is required',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
       ],
+      oAuth: {
+        google: `${env.api.url}/login/google`,
+        github: `${env.api.url}/login/github`
+      },
       password: '',
       passwordRules: [ v => !!v || 'Password is required' ]
     }
@@ -73,14 +119,14 @@ export default {
           password: this.password
         })
     },
-    storeAccessToken (data) {
-      this.setApiAccess(data)
+    storeTokenAndRedirect (token) {
+      this.setAccessToken(token)
       this.$router.push({ name: 'Home' })
     },
     submit () {
       if (this.$refs.form.validate()) {
         this.attemptLogin()
-          .then(({ data }) => this.storeAccessToken(data))
+          .then(({ data }) => this.storeTokenAndRedirect(data.access_token))
           .catch(error => {
             this.handle(error)
           })
