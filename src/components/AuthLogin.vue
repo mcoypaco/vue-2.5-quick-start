@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <v-layout align-center justify-center fill-height>
-      <v-flex xs12 sm8 md6 lg4 xl3>
+      <v-flex xs12 sm5 md4 lg3 xl2>
         <v-layout justify-center>
           <img src="/static/img/logo.png" class="mb-3" height="150"/>
         </v-layout>
@@ -9,7 +9,7 @@
           <v-card-title>
             <v-layout column>
               <v-flex class="mx-3 mb-3">
-                <v-form ref="form" lazy-validation>
+                <v-form ref="form">
                   <v-text-field
                     label="Email"
                     v-model="email"
@@ -34,6 +34,7 @@
                     depressed
                     class="mt-4"
                     color="primary"
+                    round
                     type="submit"
                     @click.prevent="submit"
                     :loading="busy">
@@ -49,6 +50,7 @@
                   dark
                   large
                   depressed
+                  round
                   color="red"
                   class="my-4"
                   :href="oAuth.google">
@@ -60,6 +62,7 @@
                   dark
                   large
                   depressed
+                  round
                   class="my-4"
                   :href="oAuth.github">
                   <v-icon left>mdi-github-circle</v-icon>
