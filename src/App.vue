@@ -1,14 +1,18 @@
 <template>
   <v-app>
     <router-view/>
-    <app-alert-dialog></app-alert-dialog>
-    <app-confirmation-dialog></app-confirmation-dialog>
+    <AppAlertDialog/>
+    <AppConfirmationDialog/>
   </v-app>
 </template>
 
 <script>
+import AppAlertDialog from '@/components/AppAlertDialog'
+import AppConfirmationDialog from '@/components/AppConfirmationDialog'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: { AppAlertDialog, AppConfirmationDialog }
 }
 </script>
 
