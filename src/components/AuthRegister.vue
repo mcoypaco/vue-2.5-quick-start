@@ -20,7 +20,6 @@
                       @blur="$v.name.$touch()"
                       required
                     ></v-text-field>
-                    <!-- Todo: Check email for duplicate -->
                     <v-text-field
                       label="Email"
                       v-model="email"
@@ -30,7 +29,7 @@
                       @blur="$v.email.$touch()"
                       required
                     ></v-text-field>
-                    <AppPasswordConfirmation/>
+                    <AppPasswordConfirmation ref="passwords"/>
                     <v-btn
                       block
                       depressed
@@ -51,13 +50,18 @@
   </v-app>
 </template>
 <script>
+import axios from 'axios'
 import _ from 'lodash'
 import { required, email } from 'vuelidate/lib/validators'
 import { mapState } from 'vuex'
 
+import env from '../environments'
 import AppPasswordConfirmation from '@/components/AppPasswordConfirmation'
+import Auth from '../mixins/Auth'
+import HttpException from '../mixins/HttpException'
 
 export default {
+  mixins: [ Auth, HttpException ],
   components: { AppPasswordConfirmation },
   data () {
     return {
@@ -82,23 +86,28 @@ export default {
       if (!this.$v.email.$dirty) return errors
       !this.$v.email.email && errors.push('Must be valid email')
       !this.$v.email.required && errors.push('Email is required')
+      !this.$v.email.isUnique && errors.push('Email already in use')
       return errors
     }
   },
   methods: {
-    checkEmail: _.debounce((email) => {
-      // if(!this.$v.email.$invalid) // Todo: check duplicate at storage
+    checkEmail: _.debounce(function () {
+      if (this.$v.email.email) this.$v.email.$touch()
     }, 500),
     register () {
-      if (!this.$v.$invalid && this.password === this.passwordConfirmation) {
+      this.$v.$touch()
+      this.$refs.passwords.$v.$touch()
+
+      if (!this.$v.$invalid && !this.$refs.passwords.$invalid) {
         const payload = {
           name: this.name,
           email: this.email,
           password: this.password,
           password_confirmation: this.passwordConfirmation
         }
-
-        console.log(payload)
+        axios.post(`${env.api.url}/api/user`, payload)
+          .then(resp => this.attemptLogin())
+          .catch(({ response }) => this.handle(response))
       }
     }
   },
@@ -106,7 +115,21 @@ export default {
     name: { required },
     email: {
       required,
-      email
+      email,
+      isUnique (email) {
+        if (email === '' || !this.$v.email.email) return true
+
+        this.checkingEmail = true
+
+        return new Promise((resolve, reject) => {
+          axios.post(`${env.api.url}/api/user/check-duplicate`, { email: this.email })
+            .then(({ data }) => resolve(!data))
+            .catch(({ response }) => this.handle(response))
+            .finally(() => {
+              this.checkingEmail = false
+            })
+        })
+      }
     }
   }
 }
