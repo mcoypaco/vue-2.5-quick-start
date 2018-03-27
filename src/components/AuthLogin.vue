@@ -84,8 +84,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import env from '../environments'
 import Auth from '../mixins/Auth'
 import HttpException from '../mixins/HttpException'
@@ -110,29 +108,11 @@ export default {
     }
   },
   methods: {
-    attemptLogin () {
-      this.busy = true
-
-      return axios
-        .post(`${env.api.url}/oauth/token`, {
-          grant_type: 'password',
-          client_id: env.api.client_id,
-          client_secret: env.api.client_secret,
-          username: this.email,
-          password: this.password
-        })
-    },
-    storeTokenAndRedirect (token) {
-      this.setAccessToken(token)
-      this.$router.push({ name: 'Home' })
-    },
     submit () {
       if (this.$refs.form.validate()) {
+        this.busy = true
+
         this.attemptLogin()
-          .then(({ data }) => this.storeTokenAndRedirect(data.access_token))
-          .catch(error => {
-            this.handle(error)
-          })
           .finally(() => {
             this.busy = false
           })
