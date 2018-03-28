@@ -11,9 +11,11 @@ export default {
     getAccessToken () {
       return localStorage.getItem('accessToken')
     },
-    // Todo: Store the user in vuex instead
-    setUser (data) {
-      localStorage.setItem('user', JSON.stringify(data))
+    removeAccessToken () {
+      localStorage.removeItem('accessToken')
+    },
+    setUser (user) {
+      localStorage.setItem('user', JSON.stringify(user))
     },
     getUser () {
       return JSON.parse(localStorage.getItem('user'))
