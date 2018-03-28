@@ -9,12 +9,12 @@
         <v-spacer></v-spacer>
         <v-menu offset-y>
           <v-avatar slot="activator">
-            <img :src="user.avatar" alt="avatar">
+            <img :src="user.avatar || '/static/img/logo.png'" alt="avatar">
           </v-avatar>
           <v-list>
             <v-subheader>{{ user.name }}</v-subheader>
             <v-divider></v-divider>
-            <v-list-tile v-if="!user.provider">
+            <v-list-tile v-if="!user.provider" @click="changePassword">
               <v-list-tile-title>
                 Change Password
               </v-list-tile-title>
@@ -53,12 +53,15 @@ export default {
   },
   methods: {
     ...mapMutations('core', ['setRoute']),
+    changePassword () {
+      this.$router.push({ name: 'Change Password' })
+    },
     signOut () {
       this.busy = true
 
       this.logout()
         .then(resp => {
-          localStorage.removeItem('accessToken')
+          this.removeAccessToken()
           this.$router.push('/login')
         })
         .catch(({ response }) => {
