@@ -1,6 +1,6 @@
-import Home from '@/components/Home'
-
 import Auth from '../mixins/Auth'
+
+const Home = () => import('../components/Home')
 
 export default {
   routes: [
