@@ -19,7 +19,6 @@
                       @blur="$v.email.$touch()"
                       required
                     ></v-text-field>
-                    <AppPasswordConfirmation ref="passwords"/>
                     <v-btn
                       block
                       depressed
@@ -27,9 +26,9 @@
                       round
                       color="primary"
                       type="submit"
+                      @click.prevent="resetPassword"
                       :loading="busy"
-                      @click.prevent="changePassword"
-                    >Change Password</v-btn>
+                      >Send Reset Password Link</v-btn>
                   </v-form>
                 </v-flex>
               </v-layout>
@@ -42,58 +41,42 @@
 </template>
 <script>
 import axios from 'axios'
-import { mapState } from 'vuex'
-import { required, email } from 'vuelidate/lib/validators'
+import { email, required } from 'vuelidate/lib/validators'
 
 import env from '../environments'
-
-import AppNotification from '../mixins/AppNotification'
-import AppPasswordConfirmation from './AppPasswordConfirmation'
-import Auth from '../mixins/Auth'
 import HttpException from '../mixins/HttpException'
+import AppNotification from '../mixins/AppNotification'
 
 export default {
-  components: { AppPasswordConfirmation },
-  mixins: [ AppNotification, Auth, HttpException ],
+  mixins: [ HttpException, AppNotification ],
   data () {
     return {
-      busy: false,
-      email: ''
+      email: '',
+      busy: false
     }
   },
   computed: {
-    ...mapState('passwordConfirmation', [
-      'password',
-      'passwordConfirmation'
-    ]),
     emailErrors () {
       const errors = []
       if (!this.$v.email.$dirty) return errors
-      !this.$v.email.email && errors.push('Must be valid email')
       !this.$v.email.required && errors.push('Email is required')
+      !this.$v.email.email && errors.push('Must be valid email')
       return errors
     }
   },
   methods: {
-    changePassword () {
-      this.$v.$touch()
-      this.$refs.passwords.$v.$touch()
+    resetPassword () {
+      this.$v.email.$touch()
 
-      if (!this.$v.invalid && !this.$refs.passwords.$v.$invalid) {
+      if (!this.$v.email.$invalid) {
         this.busy = true
 
-        axios
-          .post(`${env.api.url}/api/password/reset/${this.$route.params.token}`, {
-            token: this.$route.params.token,
-            email: this.email,
-            password: this.password,
-            password_confirmation: this.passwordConfirmation
-          })
+        axios.post(`${env.api.url}/api/password/reset`, { email: this.email })
           .then(resp => {
-            this.simpleNotification('Password reset successful!')
-            this.attemptLogin()
+            this.simpleNotification('We have sent your password reset link!')
+            this.$router.push({ name: 'Login' })
           })
-          .catch(({ response }) => this.handle(response))
+          // .catch(({ response }) => this.handle(response))
           .finally(() => {
             this.busy = false
           })

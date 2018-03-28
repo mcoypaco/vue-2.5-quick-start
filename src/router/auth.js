@@ -1,5 +1,6 @@
 import Auth from '../mixins/Auth'
 const AuthLogin = () => import('../components/AuthLogin')
+const AuthForgotPassword = () => import('../components/AuthForgotPassword')
 const AuthPasswordReset = () => import('../components/AuthPasswordReset')
 const AuthRegister = () => import('../components/AuthRegister')
 
@@ -19,6 +20,12 @@ export default {
     },
     {
       path: '/password/reset',
+      name: 'ForgotPassword',
+      component: AuthForgotPassword,
+      beforeEnter: (to, from, next) => redirectUserIfAuthenticated(to, from, next)
+    },
+    {
+      path: '/password/reset/:token',
       name: 'PasswordReset',
       component: AuthPasswordReset,
       beforeEnter: (to, from, next) => redirectUserIfAuthenticated(to, from, next)
