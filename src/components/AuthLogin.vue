@@ -13,17 +13,17 @@
                   <v-text-field
                     label="Email"
                     v-model="email"
-                    :rules="emailRules"
+                    :error-messages="emailErrors"
+                    @blur="$v.email.$touch()"
                     required
-                    validate-on-blur
                   ></v-text-field>
                   <v-text-field
                     label="Password"
                     type="password"
                     v-model="password"
-                    :rules="passwordRules"
+                    :error-messages="passwordErrors"
+                    @blur="$v.password.$touch()"
                     required
-                    validate-on-blur
                   ></v-text-field>
                   <div class="mb-4">
                     <router-link to="/password/reset">Having trouble logging in?</router-link>
@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import { email, required } from 'vuelidate/lib/validators'
+
 import env from '../environments'
 import Auth from '../mixins/Auth'
 import HttpException from '../mixins/HttpException'
@@ -95,21 +97,38 @@ export default {
     return {
       busy: false,
       email: '',
-      emailRules: [
-        v => !!v || 'Email is required',
-        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
-      ],
       oAuth: {
         google: `${env.api.url}/login/google`,
         github: `${env.api.url}/login/github`
       },
-      password: '',
-      passwordRules: [ v => !!v || 'Password is required' ]
+      password: ''
+    }
+  },
+  computed: {
+    emailErrors () {
+      const errors = []
+
+      if (!this.$v.email.$dirty) return errors
+
+      !this.$v.email.required && errors.push('Email is required')
+      !this.$v.email.email && errors.push('Must be valid email')
+
+      return errors
+    },
+    passwordErrors () {
+      const errors = []
+
+      if (!this.$v.password.$dirty) return errors
+
+      !this.$v.password.required && errors.push('Password is required')
+
+      return errors
     }
   },
   methods: {
     submit () {
-      if (this.$refs.form.validate()) {
+      this.$v.$touch()
+      if (!this.$v.$invalid) {
         this.busy = true
 
         this.attemptLogin()
@@ -118,6 +137,10 @@ export default {
           })
       }
     }
+  },
+  validations: {
+    email: { required, email },
+    password: { required }
   }
 }
 </script>
