@@ -10,8 +10,8 @@
             <v-card-title>
               <v-layout column>
                 <v-flex class="mx-3 mb-3">
-                <h3 class="title my-3 primary--text">Sign Up</h3>
-                  <v-form ref="form">
+                  <h3 class="title my-3 primary--text">Sign Up</h3>
+                  <v-form>
                     <v-text-field
                       label="Name"
                       v-model="name"
