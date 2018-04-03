@@ -19,7 +19,7 @@
                 Change Password
               </v-list-tile-title>
             </v-list-tile>
-            <v-list-tile @click="signOut" :loading="busy">
+            <v-list-tile @click="logout">
               <v-list-tile-title>
                 Logout
               </v-list-tile-title>
@@ -38,7 +38,10 @@ import Auth from '../mixins/Auth'
 import HttpException from '../mixins/HttpException'
 
 export default {
-  mixins: [ Auth, HttpException ],
+  mixins: [
+    Auth,
+    HttpException
+  ],
   data () {
     return {
       busy: false,
@@ -48,29 +51,14 @@ export default {
   computed: {
     ...mapState('core', ['route'])
   },
-  created () {
-    this.setRoute('Home')
-  },
   methods: {
     ...mapMutations('core', ['setRoute']),
     changePassword () {
       this.$router.push({ name: 'Change Password' })
-    },
-    signOut () {
-      this.busy = true
-
-      this.logout()
-        .then(resp => {
-          this.removeAccessToken()
-          this.$router.push('/login')
-        })
-        .catch(({ response }) => {
-          this.handle(response)
-        })
-        .finally(() => {
-          this.busy = false
-        })
     }
+  },
+  created () {
+    this.setRoute('Home')
   }
 }
 </script>
