@@ -30,9 +30,6 @@ export default {
           password: this.password
         })
         .then(({ data }) => this.storeTokenAndRedirect(data.access_token))
-        .catch(error => {
-          this.handle(error)
-        })
     },
     storeTokenAndRedirect (token) {
       this.setAccessToken(token)
@@ -60,7 +57,13 @@ export default {
         }
       })
 
-      return api.post(`${env.api.url}/api/logout`)
+      return api
+        .post(`${env.api.url}/api/logout`)
+        .then(resp => {
+          this.removeAccessToken()
+          this.$router.push('/login')
+        })
+        .catch(({ response }) => this.handle(response))
     }
   }
 }
