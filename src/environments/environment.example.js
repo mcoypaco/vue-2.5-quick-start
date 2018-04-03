@@ -1,4 +1,5 @@
 export default {
+  production: false,
   api: {
     url: 'http://example-api',
     client_id: null,
