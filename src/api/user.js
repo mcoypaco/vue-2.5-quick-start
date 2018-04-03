@@ -1,5 +1,3 @@
-import Rest from './rest-api'
-
 export default {
   namespaced: true,
   strict: true,
@@ -7,6 +5,12 @@ export default {
     url: 'user'
   },
   actions: {
-    ...Rest
+    changePassword ({ state, dispatch }, payload) {
+      return dispatch('api/post', { url: `${state.url}/change-password`, payload }, { root: true })
+    },
+
+    checkPassword ({ state, dispatch }, payload) {
+      return dispatch('api/post', { url: `${state.url}/check-password`, payload }, { root: true })
+    }
   }
 }
