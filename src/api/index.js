@@ -10,7 +10,7 @@ export default {
   state: {
     http: axios.create({
       baseURL: `${env.api.url}/api`,
-      headers: { Authorization: `Bearer: ${Auth.methods.getAccessToken()}` }
+      headers: { Authorization: `Bearer ${Auth.methods.getAccessToken()}` }
     })
   },
   modules: { user }
