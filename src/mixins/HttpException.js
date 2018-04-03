@@ -1,5 +1,7 @@
 import { mapMutations } from 'vuex'
 
+import Auth from './Auth'
+
 export default {
   data () {
     return {
@@ -72,7 +74,10 @@ export default {
 
       this.openAlertDialog({
         title: this.error.statusText,
-        body
+        body,
+        action () {
+          Auth.methods.flush()
+        }
       })
     },
 
