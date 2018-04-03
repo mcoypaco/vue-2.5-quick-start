@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 
 import Auth from '../mixins/Auth'
 import HttpException from '../mixins/HttpException'
@@ -52,6 +52,7 @@ export default {
     ...mapState('core', ['route'])
   },
   methods: {
+    ...mapActions('pusher', ['subscribe']),
     ...mapMutations('core', ['setRoute']),
     changePassword () {
       this.$router.push({ name: 'Change Password' })
@@ -59,6 +60,7 @@ export default {
   },
   created () {
     this.setRoute('Home')
+    this.subscribe()
   }
 }
 </script>

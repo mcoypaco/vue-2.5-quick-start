@@ -1,10 +1,14 @@
 import axios from 'axios'
+import { mapState, mapMutations } from 'vuex'
 
 import env from '../environments'
-import HttpException from './HttpException'
 
 export default {
+  computed: {
+    ...mapState('pusher', ['pusher'])
+  },
   methods: {
+    ...mapMutations('pusher', ['disconnect']),
     setAccessToken (data) {
       localStorage.setItem('accessToken', data)
     },
@@ -19,6 +23,9 @@ export default {
     },
     getUser () {
       return JSON.parse(localStorage.getItem('user'))
+    },
+    removeUser () {
+      localStorage.removeItem('user')
     },
     attemptLogin () {
       return axios
@@ -35,6 +42,12 @@ export default {
       this.setAccessToken(token)
       this.$router.push({ name: 'Home' })
     },
+    flush () {
+      this.removeAccessToken()
+      this.removeUser()
+      if (this.pusher) this.disconnect()
+      this.$router.push({ name: 'Login' })
+    },
     verifyAccessToken (token, redirectFn) {
       const api = axios.create({
         headers: {
@@ -48,7 +61,7 @@ export default {
           this.setUser(data)
           redirectFn()
         })
-        .catch(({ response }) => HttpException.methods.handle(response))
+        .catch(({ response }) => this.flush())
     },
     logout () {
       const api = axios.create({
@@ -59,10 +72,7 @@ export default {
 
       return api
         .post(`${env.api.url}/api/logout`)
-        .then(resp => {
-          this.removeAccessToken()
-          this.$router.push('/login')
-        })
+        .then(resp => this.flush())
         .catch(({ response }) => this.handle(response))
     }
   }

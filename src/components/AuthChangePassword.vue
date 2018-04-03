@@ -101,10 +101,7 @@ export default {
 
         this.changePassword(payload)
           .then(resp => {
-            this.simpleNotification('Password changed. Please re-login to continue.')
-            this.removeAccessToken()
-            this.$router.push({ name: 'Login' })
-            // Todo: Pusher receive notification of change password then log user out.
+            this.simpleNotification('Password changed')
           })
           .catch(({ response }) => this.handle(response))
           .finally(() => {
