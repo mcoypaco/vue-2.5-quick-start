@@ -5,6 +5,9 @@
         <v-layout justify-center>
           <img src="/static/img/logo.png" class="mb-3" height="150"/>
         </v-layout>
+        <v-alert type="error" :value="invalidCredentials">
+          Invalid credentials
+        </v-alert>
         <v-card>
           <v-card-title>
             <v-layout column>
@@ -97,6 +100,7 @@ export default {
     return {
       busy: false,
       email: '',
+      invalidCredentials: false,
       oAuth: {
         google: `${env.api.url}/login/google`,
         github: `${env.api.url}/login/github`
@@ -132,6 +136,10 @@ export default {
         this.busy = true
 
         this.attemptLogin()
+          .catch(({ response }) => {
+            if (response.status === 401) this.invalidCredentials = true
+            else this.handle(response)
+          })
           .finally(() => {
             this.busy = false
           })

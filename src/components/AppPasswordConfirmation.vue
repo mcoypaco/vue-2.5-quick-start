@@ -1,7 +1,7 @@
 <template>
   <v-form>
     <v-text-field
-      label="Password"
+      :label="passwordLabel || 'Password'"
       type="password"
       :value="password"
       @input="updatePassword"
@@ -25,6 +25,11 @@ import { minLength, required, sameAs } from 'vuelidate/lib/validators'
 import { mapMutations, mapState } from 'vuex'
 
 export default {
+  props: {
+    passwordLabel: {
+      type: String
+    }
+  },
   computed: {
     ...mapState('passwordConfirmation', [
       'password',

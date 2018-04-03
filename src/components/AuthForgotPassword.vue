@@ -76,7 +76,7 @@ export default {
             this.simpleNotification('We have sent your password reset link!')
             this.$router.push({ name: 'Login' })
           })
-          // .catch(({ response }) => this.handle(response))
+          .catch(({ response }) => this.handle(response))
           .finally(() => {
             this.busy = false
           })
