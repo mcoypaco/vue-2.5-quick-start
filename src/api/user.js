@@ -5,12 +5,12 @@ export default {
     url: 'user'
   },
   actions: {
-    changePassword ({ state, dispatch }, payload) {
-      return dispatch('api/post', { url: `${state.url}/change-password`, payload }, { root: true })
+    changePassword ({ rootState, state }, payload) {
+      return rootState.api.http().post(`${state.url}/change-password`, payload)
     },
 
-    checkPassword ({ state, dispatch }, payload) {
-      return dispatch('api/post', { url: `${state.url}/check-password`, payload }, { root: true })
+    checkPassword ({ rootState, state }, payload) {
+      return rootState.api.http().post(`${state.url}/check-password`, payload)
     }
   }
 }

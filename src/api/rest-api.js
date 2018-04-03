@@ -1,21 +1,21 @@
 export default {
-  index ({ dispatch, state }) {
-    return dispatch('api/get', { url: state.url }, { root: true })
+  index ({ rootState, state }) {
+    return rootState.api.http.get(state.url)
   },
 
-  show ({ dispatch, state }, { id }) {
-    return dispatch('api/get', { url: `${state.url}/${id}` }, { root: true })
+  show ({ rootState, state }, { id }) {
+    return rootState.api.http.get(`${state.url}/${id}`)
   },
 
-  store ({ dispatch, state }, payload) {
-    return dispatch('api/post', { url: `${state.url}`, payload }, { root: true })
+  store ({ rootState, state }, payload) {
+    return rootState.api.http.post(`${state.url}`, payload)
   },
 
-  update ({ dispatch, state }, { id, payload }) {
-    return dispatch('api/post', { url: `${state.url}/${id}`, payload }, { root: true })
+  update ({ rootState, state }, { id, payload }) {
+    return rootState.api.http.put(`${state.url}/${id}`, payload)
   },
 
-  destroy ({ dispatch, state }, { id }) {
-    return dispatch('api/get', { url: `${state.url}/${id}` }, { root: true })
+  destroy ({ rootState, state }, { id }) {
+    return rootState.api.http.delete(`${state.url}/${id}`)
   }
 }
