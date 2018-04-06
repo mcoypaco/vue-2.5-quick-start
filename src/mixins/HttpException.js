@@ -75,9 +75,7 @@ export default {
       this.openAlertDialog({
         title: this.error.statusText,
         body,
-        action () {
-          Auth.methods.flush()
-        }
+        action: () => Auth.methods.flush()
       })
     },
 
