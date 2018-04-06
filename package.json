@@ -13,9 +13,12 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "loadash": "^1.0.0",
     "mdi": "^2.1.99",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
+    "vuelidate": "^0.6.2",
     "vuetify": "^1.0.8",
     "vuex": "^3.0.1"
   },
